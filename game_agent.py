@@ -204,10 +204,10 @@ def heuristic_balanced_decrease_opp_chance_decisions(game, player):
     
     return float(0.3*player_moves - 0.7*opponent_moves)
 
-def heuristic_balanced_increase_player_chances_avoid_borders(game, player):
+def heuristic_balanced_increase_player_chances_follow_borders(game, player):
     """Heuristic that penalizes moves where the number of legal moves of the player decreases or
        the number of legal moves of the opponent increases. It gives more weight to the player moves balancing the weights
-       to give sum 1. It takes into account of the distance of the player from the center of the board.
+       to give sum 1. It takes into account the distance of the player from the center of the board and try to follow the borders.
 
     This should be the best heuristic function for your project submission.
 
@@ -248,10 +248,10 @@ def heuristic_balanced_increase_player_chances_avoid_borders(game, player):
     
     return float((0.7*player_moves - 0.3*opponent_moves) + 0.01*((h - y)**2 + (w - x)**2))
 
-def heuristic_balanced_reduce_opp_and_avoid_borders(game, player):
+def heuristic_balanced_reduce_opp_and_follow_borders(game, player):
     """Heuristic that penalizes moves where the number of legal moves of the player decreases or
        the number of legal moves of the opponent increases. It gives more weight to the opponent moves balancing the weights
-       to give sum 1. It takes into account of the distance of the player from the center of the board.
+       to give sum 1. It takes into account of the distance of the player from the center of the board and try to follow the borders.
 
     This should be the best heuristic function for your project submission.
 
@@ -446,7 +446,7 @@ def custom_score_6(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    return heuristic_balanced_increase_player_chances_avoid_borders(game, player)
+    return heuristic_balanced_increase_player_chances_follow_borders(game, player)
 
 
 def custom_score_7(game, player):
@@ -472,7 +472,7 @@ def custom_score_7(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    return heuristic_balanced_reduce_opp_and_avoid_borders(game, player)
+    return heuristic_balanced_reduce_opp_and_follow_borders(game, player)
 
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never
