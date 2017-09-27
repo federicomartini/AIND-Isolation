@@ -9,10 +9,43 @@ class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
     pass
 
+def heuristic_compare_win_chances_square(game, player):
+    """Compare the movements chances and apply a square factor that gives more weight 
+    the more moves are available.
 
-def custom_score(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    return float(player_moves**2 - opponent_moves**2)
+
+def heuristic_lower_opponent_chances(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the opponent moves.
 
     This should be the best heuristic function for your project submission.
 
@@ -49,7 +82,244 @@ def custom_score(game, player):
     
     # Heuristic that penalizes moves where the number of legal moves of the player decreases or
     # the number of legal moves of the opponent increases
-    return float(player_moves - opponent_moves)
+    return float(player_moves - 2*opponent_moves)
+
+
+def heuristic_increase_player_chances(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the player moves.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    return float(2*player_moves - opponent_moves)
+
+def heuristic_balanced_increase_player_chance_decisions(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the player moves balancing the weights
+       to give sum 1.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+
+    return float(0.7*player_moves - 0.3*opponent_moves)
+
+def heuristic_balanced_decrease_opp_chance_decisions(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the opponent moves balancing the weights
+       to give sum 1.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    return float(0.3*player_moves - 0.7*opponent_moves)
+
+def heuristic_balanced_increase_player_chances_avoid_borders(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the player moves balancing the weights
+       to give sum 1. It takes into account of the distance of the player from the center of the board.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    # Calculate the center position and get the player position
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    
+    return float((0.7*player_moves - 0.3*opponent_moves) + 0.01*((h - y)**2 + (w - x)**2))
+
+def heuristic_balanced_reduce_opp_and_avoid_borders(game, player):
+    """Heuristic that penalizes moves where the number of legal moves of the player decreases or
+       the number of legal moves of the opponent increases. It gives more weight to the opponent moves balancing the weights
+       to give sum 1. It takes into account of the distance of the player from the center of the board.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    # If the player wins, return Inf
+    if game.is_winner(player):
+        return float("inf")
+    
+    # If the player loses, return -Inf
+    if game.is_loser(player):
+        return float("-inf")
+    
+    # Get legal moves for the player and the opponent
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    # Calculate the center position and get the player position
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    
+    return float((0.3*player_moves - 0.7*opponent_moves) + 0.01*((h - y)**2 + (w - x)**2))
+
+
+
+def custom_score(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    return heuristic_compare_win_chances_square(game, player)
 
 
 def custom_score_2(game, player):
@@ -75,21 +345,7 @@ def custom_score_2(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    # If the player wins, return Inf
-    if game.is_winner(player):
-        return float("inf")
-    
-    # If the player loses, return -Inf
-    if game.is_loser(player):
-        return float("-inf")
-    
-    # Get legal moves for the player and the opponent
-    player_moves = len(game.get_legal_moves(player))
-    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    
-    # Heuristic that penalizes moves where the number of legal moves of the player decreases or
-    # even worse where the number of legal moves of the opponent increases (by a factor of 2)
-    return float(player_moves - (2*opponent_moves))
+    return heuristic_lower_opponent_chances(game, player)
 
 
 def custom_score_3(game, player):
@@ -115,22 +371,108 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    # If the player wins, return Inf
-    if game.is_winner(player):
-        return float("inf")
-    
-    # If the player loses, return -Inf
-    if game.is_loser(player):
-        return float("-inf")
-    
-    # Get legal moves for the player and the opponent
-    player_moves = len(game.get_legal_moves(player))
-    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    
-    # Heuristic that consider the difference of the square of the legal 
-    # moves for the player and the cube of the legal movements of the opponent
-    return float(player_moves**2 - opponent_moves**3)
+    return heuristic_increase_player_chances(game, player)
 
+def custom_score_4(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    return heuristic_balanced_increase_player_chance_decisions(game, player)
+
+def custom_score_5(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    return heuristic_balanced_decrease_opp_chance_decisions(game, player)
+
+def custom_score_6(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    return heuristic_balanced_increase_player_chances_avoid_borders(game, player)
+
+
+def custom_score_7(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!
+    return heuristic_balanced_reduce_opp_and_avoid_borders(game, player)
 
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never
